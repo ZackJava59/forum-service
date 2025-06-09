@@ -36,6 +36,9 @@ const postSchema = new mongoose.Schema({
         transform(doc, ret) {
             ret.id = ret._id;
             delete ret._id;
+            if(ret.dateCreated instanceof Date) {
+                ret.dateCreated = ret.dateCreated.toISOString().split('.')[0];
+            }
         }
     }
 })

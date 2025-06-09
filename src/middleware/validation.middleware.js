@@ -1,21 +1,25 @@
-import joi from 'joi';
 import Joi from "joi";
 
 const schemas = {
-    createPost: joi.object({
-        title: joi.string().required(),
-        content: joi.string().required(),
-        tags: joi.array().items(Joi.string()),
+    createPost: Joi.object({
+        title: Joi.string().required(),
+        content: Joi.string().required(),
+        tags: Joi.array().items(Joi.string()),
     }),
 
-    addComment: joi.object({
-        message: joi.string().required(),
+    addComment: Joi.object({
+        message: Joi.string().required(),
     }),
 
-    updatePost: joi.object({
-        title: joi.string(),
-        content: joi.string(),
-        tags: joi.array().items(Joi.string()),
+    updatePost: Joi.object({
+        title: Joi.string(),
+        content: Joi.string(),
+        tags: Joi.array().items(Joi.string()),
+    }),
+
+    datePeriod: Joi.object({
+        dateFrom: Joi.date().required(),
+        dateTo: Joi.date().greater(Joi.ref('dateFrom')).required(),
     })
 }
 
@@ -27,7 +31,10 @@ const validate = (schemaName) => {
             return next(new Error(`Schema ${schemaName} not found`));
         }
 
-        const {error} = schema.validate(req.body);
+        const data = schemaName === 'datePeriod'
+            ? req.query
+            : req.body;
+        const {error} = schema.validate(data);
 
         if (error) {
             return res.status(400).send({

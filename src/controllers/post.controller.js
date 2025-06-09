@@ -19,10 +19,10 @@ class PostController {
         }
     }
 
-    async updateLikeById(req, res, next) {
+    async addLike(req, res, next) {
         try {
             const post = await postService.addLike(req.params.id);
-            res.status(200).json(post);
+            res.sendStatus(204);
         } catch (err) {
             next(err);
         }
@@ -30,8 +30,8 @@ class PostController {
 
     async getPostsByAuthor(req, res, next) {
         try {
-            const post = await postService.getPostByAuthor(req.params.user);
-            res.status(200).json(post);
+            const posts = await postService.getPostsByAuthor(req.params.author);
+            res.json(posts);
         } catch (err) {
             next(err);
         }
@@ -39,8 +39,8 @@ class PostController {
 
     async addComment(req, res, next) {
         try {
-            const comment = await postService.addComment(req.params.id, req.params.commenter, req.body.message);
-            res.status(200).json(comment);
+            const post = await postService.addComment(req.params.id, req.params.commenter, req.body.message);
+            res.json(post);
         } catch (err) {
             next(err);
         }
@@ -49,7 +49,7 @@ class PostController {
     async deletePost(req, res, next) {
         try {
             const post = await postService.deletePost(req.params.id);
-            res.status(200).json(post);
+            res.json(post);
         } catch (err) {
             next(err);
         }
@@ -57,9 +57,9 @@ class PostController {
 
     async getPostsByTags(req, res, next) {
         try {
-            const valuesString = req.query.values;
-            const posts = await postService.getPostsByTags(valuesString);
-            return res.status(200).json(posts);
+            const values = Array.isArray(req.query.values) ? req.query.values : [req.query.values];
+            const posts = await postService.getPostsByTags(values);
+            return res.json(posts);
         } catch (err) {
             next(err);
         }
@@ -67,10 +67,8 @@ class PostController {
 
     async getPostsByPeriod(req, res, next) {
         try {
-            const dateFromStr = req.query.dateFrom;
-            const dateToStr = req.query.dateTo;
-            const posts = await postService.getPostsByPeriod(dateFromStr, dateToStr);
-            return res.status(200).json(posts);
+            const posts = await postService.getPostsByPeriod(req.query.dateFrom, req.query.dateTo);
+            return res.json(posts);
         } catch (err) {
             next(err);
         }
@@ -78,10 +76,8 @@ class PostController {
 
     async updatePost(req, res, next) {
         try {
-            const id = req.params.id;
-            const data = req.body;
-            const updated = await postService.updatePost(id, data);
-            return res.status(200).json(updated);
+            const updated = await postService.updatePost(req.params.id, req.body);
+            return res.json(updated);
         } catch (err) {
             next(err);
         }

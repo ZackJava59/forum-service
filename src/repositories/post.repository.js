@@ -11,38 +11,38 @@ class PostRepository {
         return Post.findById(id);
     }
 
-    async save(post) {
-        post.save();
+    async addLike(id) {
+        return Post.findByIdAndUpdate(id, {$inc: {likes: 1}}, {new:true})
     }
 
     async getPostsByAuthor(author) {
         return Post.find({author}).collation({locale: 'en', strength: 2});
     }
 
-    async addComment(id, commentData) {
-        return Post.findByIdAndUpdate(id, commentData, {new: true});
+    async addComment(id, comment) {
+        return Post.findByIdAndUpdate(id, {$push: {comments:comment}}, {new: true});
     }
 
     async deletePost(id) {
         return Post.findByIdAndDelete(id);
     }
 
-    async findByTags(tagsArray) {
+    async findPostsByTags(tags) {
         return Post
-            .find({tags: {$in: tagsArray}})
+            .find({tags: {$in: tags}})
             .collation({locale: 'en', strength: 2});
     }
 
-    async findByPeriod(startDate, endDate) {
+    async findPostsByPeriod(dateFrom, dateTo) {
         return Post.find({
             dateCreated: {
-                $gte: startDate,
-                $lte: endDate
+                $gte: dateFrom,
+                $lte: dateTo
             }
         });
     }
 
-    async updatePostById(id, updateData) {
+    async updatePost(id, updateData) {
         return Post.findByIdAndUpdate(id, updateData, {new: true});
     }
 }

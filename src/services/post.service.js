@@ -1,5 +1,4 @@
 import postRepository from "../repositories/post.repository.js";
-import postController from "../controllers/post.controller.js";
 
 class PostService {
     async createPost(author, data) {
@@ -15,35 +14,27 @@ class PostService {
     }
 
     async addLike(id) {
-        const post = await postRepository.findById(id);
+        const post = await postRepository.addLike(id);
         if (!post) {
             throw new Error(`Post with ${id} not found`);
-        }
-        post.likes += 1;
-        return postRepository.save(post);
-    }
-
-    async getPostByAuthor(user) {
-        const post = await postRepository.getPostsByAuthor(user);
-        if (!post) {
-            throw new Error(`Post with ${author} not found`);
         }
         return post;
     }
 
+    async getPostsByAuthor(author) {
+        return await postRepository.getPostsByAuthor(author)
+    }
+
     async addComment(id, commenter, message) {
-        const toUpdate = {
+        const comment = {
             user: commenter,
             message,
-            dateCreated: new Date(),
         }
-
-        const commentData = {$push: {comments: toUpdate}};
-        const comment = await postRepository.addComment(id, commentData);
-        if (!comment) {
+        const post = await postRepository.addComment(id, comment);
+        if (!post) {
             throw new Error(`Post with ${id} not found`);
         }
-        return comment;
+        return post;
     }
 
     async deletePost(id) {
@@ -53,38 +44,27 @@ class PostService {
         }
         return post;
     }
-
-    async getPostsByTags(valuesString) {
-        const tagsArray = valuesString
-            .split(",")
-            .map(tag => tag.trim())
-            .filter(tag => tag.length > 0);
-        if (tagsArray.length === 0) {
-            return [];
-        }
-        return await postRepository.findByTags(tagsArray);
+    async getPostsByTags(tagsString) {
+        const tags = tagsString
+            .flatMap(value => value.split(",")).map(tag => tag.trim().toLowerCase());
+        return await postRepository.findPostsByTags(tags);
     }
 
-    async getPostsByPeriod(dateFromStr, dateToStr) {
-        const startDate = new Date(dateFromStr);
-        const endDate = new Date(dateToStr);
-        return await postRepository.findByPeriod(startDate, endDate);
+
+    async getPostsByPeriod(dateFrom, dateTo) {
+        return await postRepository.findPostsByPeriod(new Date(dateFrom), new Date(dateTo));
     }
 
     async updatePost(id, data) {
-        if (!id) {
-            throw new Error("Post id is required");
-        }
-        if (!data || typeof data !== "object") {
-            throw new Error("Update data is required");
-        }
-        const updatedPost = await postRepository.updatePostById(id, data);
-        if (!updatedPost) {
+        const post = await postRepository.findById(id);
+        if (!post) {
             throw new Error(`Post with id ${id} not found`);
         }
-        return updatedPost;
+        if(data.tags) {
+            data.tags.push(...post.tags);
+        }
+        return await postRepository.updatePost(id, data);
     }
-
 }
 
 export default new PostService();
