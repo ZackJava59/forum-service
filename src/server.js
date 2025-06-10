@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import postRoutes from "./routs/post.routes.js";
+import userRoutes from "./routs/userAccount.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
 import config from './config/config.js';
 
@@ -8,6 +9,7 @@ const app = express();
 
 app.use(express.json())
 app.use('/forum', postRoutes)
+app.use('/account', userRoutes)
 app.use(errorHandler);
 
 const connectDB = async ()=>
