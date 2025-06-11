@@ -44,12 +44,12 @@ class PostService {
         }
         return post;
     }
+
     async getPostsByTags(tagsString) {
         const tags = tagsString
             .flatMap(value => value.split(",")).map(tag => tag.trim().toLowerCase());
         return await postRepository.findPostsByTags(tags);
     }
-
 
     async getPostsByPeriod(dateFrom, dateTo) {
         return await postRepository.findPostsByPeriod(new Date(dateFrom), new Date(dateTo));
@@ -60,7 +60,7 @@ class PostService {
         if (!post) {
             throw new Error(`Post with id ${id} not found`);
         }
-        if(data.tags) {
+        if (data.tags) {
             data.tags.push(...post.tags);
         }
         return await postRepository.updatePost(id, data);

@@ -12,7 +12,7 @@ class PostRepository {
     }
 
     async addLike(id) {
-        return Post.findByIdAndUpdate(id, {$inc: {likes: 1}}, {new:true})
+        return Post.findByIdAndUpdate(id, {$inc: {likes: 1}}, {new: true})
     }
 
     async getPostsByAuthor(author) {
@@ -20,7 +20,7 @@ class PostRepository {
     }
 
     async addComment(id, comment) {
-        return Post.findByIdAndUpdate(id, {$push: {comments:comment}}, {new: true});
+        return Post.findByIdAndUpdate(id, {$push: {comments: comment}}, {new: true});
     }
 
     async deletePost(id) {

@@ -1,22 +1,37 @@
-import User from '../model/user.model.js'
+import UserAccount from '../model/userAccount.model.js'
+import bcrypt from "bcrypt";
 
 class UserAccountRepository {
 
-    async addUser(data) {
-        const user = new User(data);
-        return user.save();
+    async register(login) {
+        const userAccount = new UserAccount(login);
+        return userAccount.save();
     }
 
-    async loginUser(data) {
-        //TODO
+    async findUser(login) {
+        return UserAccount.findById(login)
     }
 
     async deleteUser(login) {
-        return User.findOneAndDelete({login: login});
+        return UserAccount.findByIdAndDelete(login);
     }
 
     async updateUser(login, updateData) {
-        return User.findOneAndUpdate({login: login}, {firstName: updateData.firstName, lastName: updateData.lastName}, {new: true})
+        return UserAccount.findByIdAndUpdate(login, updateData, {new: true})
+    }
+
+    async addRole(login, role) {
+        return UserAccount.findByIdAndUpdate(login, {$addToSet: {roles: role}}, {new: true});
+    }
+
+    async deleteRole(login, role) {
+        return UserAccount.findByIdAndUpdate(login, {$pull: {roles: role}}, {new: true});
+    }
+
+    async changePassword(login, password) {
+        const salt = await bcrypt.genSalt(12);
+        password = await bcrypt.hash(password, salt);
+        return UserAccount.findByIdAndUpdate(login, {$set: {password}}, {new: true})
     }
 }
 

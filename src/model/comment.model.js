@@ -21,8 +21,8 @@ const commentSchema = new mongoose.Schema({
 
 commentSchema.set('toJSON', {
     transform: (doc, ret) => {
-        if(ret.dateCreated instanceof Date) {
-           return ret.dateCreated = ret.dateCreated.toISOString().split('.')[0];
+        if (ret.dateCreated instanceof Date) {
+            return ret.dateCreated = ret.dateCreated.toISOString().split('.')[0];
         }
     }
 })

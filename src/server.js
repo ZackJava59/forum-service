@@ -4,16 +4,17 @@ import postRoutes from "./routs/post.routes.js";
 import userRoutes from "./routs/userAccount.routes.js";
 import errorHandler from "./middleware/error.middleware.js";
 import config from './config/config.js';
+import authentication from "./middleware/authentication.middleware.js";
 
 const app = express();
 
 app.use(express.json())
+app.use(authentication)
 app.use('/forum', postRoutes)
 app.use('/account', userRoutes)
 app.use(errorHandler);
 
-const connectDB = async ()=>
-{
+const connectDB = async () => {
     try {
         await mongoose.connect(config.mongo.uri, config.mongo.db);
         console.log('Connected to MongoDB successfully');

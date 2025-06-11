@@ -18,8 +18,8 @@ const schemas = {
     }),
 
     datePeriod: Joi.object({
-        dateFrom: Joi.date().required(),
-        dateTo: Joi.date().greater(Joi.ref('dateFrom')).required(),
+        dateFrom: Joi.date().iso().required(),
+        dateTo: Joi.date().iso().greater(Joi.ref('dateFrom')).required(),
     })
 }
 

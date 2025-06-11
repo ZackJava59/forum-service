@@ -3,43 +3,53 @@ import userAccountRepository from "../repositories/userAccount.repository.js";
 
 class userAccountService {
 
-    async addUser(data) {
-       return await userAccountRepository.addUser(data);
+    async register(login) {
+        return await userAccountRepository.register(login);
     }
 
-    async loginUser(data) {
-        //TODO login user
-    }
-
-    async deleteUserByName(login) {
-       return await userAccountRepository.deleteUser(login);
-
-    }
-
-    async updateUserByName(login, data) {
-        const updateData = {
-            firstName: data.firstName,
-            lastName: data.lastName,
+    async getUser(login) {
+        const userAccount = await userAccountRepository.findUser(login);
+        if (!userAccount) {
+            throw new Error(`User with login ${login} not found`);
         }
-        return await userAccountRepository.updateUser(login, updateData);
+        return userAccount;
     }
 
-    async addRole(user, role) {
-        // TODO update User by role
+    async deleteUser(login) {
+        const userAccount = await userAccountRepository.deleteUser(login);
+        if (!userAccount) {
+            throw new Error(`User with login ${login} not found`);
+        }
+        return userAccount;
     }
 
-    async deleteRole(user, role) {
-        // TODO delete User by role
+    async updateUser(login, user) {
+        const userAccount = await userAccountRepository.updateUser(login, user);
+        if (!userAccount) {
+            throw new Error(`User with login ${login} not found`);
+        }
+        return userAccount;
     }
 
-    async changePassword(data) {
-        //TODO update password
+    async addRole(login, role) {
+        const userAccount = await userAccountRepository.addRole(login, role);
+        if (!userAccount) {
+            throw new Error(`User with login ${login} not found`);
+        }
+        return userAccount;
     }
 
-    async getUserByName(user) {
-        //TODO find user by name
+    async deleteRole(login, role) {
+        const userAccount = await userAccountRepository.deleteRole(login, role);
+        if (!userAccount) {
+            throw new Error(`User with login ${login} not found`);
+        }
+        return userAccount;
     }
 
+    async changePassword(login, newPassword) {
+        const userAccount = await userAccountRepository.changePassword(login, newPassword);
+    }
 }
 
 export default new userAccountService();
