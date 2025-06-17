@@ -29,9 +29,9 @@ class UserAccountRepository {
     }
 
     async changePassword(login, password) {
-        const salt = await bcrypt.genSalt(12);
-        password = await bcrypt.hash(password, salt);
-        return UserAccount.findByIdAndUpdate(login, {$set: {password}}, {new: true})
+        // const salt = await bcrypt.genSalt(12);
+        // password = await bcrypt.hash(password, salt);
+        return UserAccount.findOneAndUpdate({_id:login}, {$set: {password}}, {new: true})
     }
 }
 

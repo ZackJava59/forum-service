@@ -40,6 +40,15 @@ userAccountSchema.pre("save", async function () {
         this.password = await bcrypt.hash(this.password, salt);
     }
 })
+userAccountSchema.pre("findOneAndUpdate", async function () {
+    const update = this.getUpdate();
+    const password = update?.$set?.password;
+    if (password) {
+        const salt = await bcrypt.genSalt(12);
+        const hash = await bcrypt.hash(password, salt);
+        update.$set.password = hash;
+    }
+})
 
 userAccountSchema.methods.comparePassword = async function (plainTextPassword) {
     return await bcrypt.compare(plainTextPassword, this.password);
